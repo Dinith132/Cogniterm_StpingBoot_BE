@@ -2,11 +2,8 @@ package com.test.demo.controller;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.test.demo.model.User;
@@ -24,17 +21,22 @@ public class UserController {
 
     @GetMapping("/method")
     public String getMethodName() {
+        System.out.println("dmwodmwodmwodwmdo");
         return "hellow";
     }
     
 
-    @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestParam String username,
-                                         @RequestParam String password) {
-        User user = userService.registerUser(username, password);
-        return ResponseEntity.ok(user);
+    // @PostMapping("/register")
+    // public ResponseEntity<User> register(@RequestParam String username,
+    //                                      @RequestParam String password) {
+    //     System.out.println("Registering user: " + username);
+    //     User user = userService.registerUser(username, password);
+    //     return ResponseEntity.ok(user);
+    // }
+
+
+    @GetMapping("/getAll")
+    public List<User> getAll() {
+        return userService.getAllUsers();
     }
-
-
-    
 }
