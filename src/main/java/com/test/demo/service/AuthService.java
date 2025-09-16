@@ -21,15 +21,6 @@ public class AuthService {
                 .filter(u -> u.getUsername().equals(username))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
-        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-        System.out.println(user);
-        System.out.println(user.getPasswordHash());
-        
-
-
-
         if (userService.checkPassword(password, user.getPasswordHash())) {
             return jwtUtil.generateToken(username);
         } else {

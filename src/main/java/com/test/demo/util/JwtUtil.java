@@ -38,16 +38,16 @@ public class JwtUtil {
     }
 
     // Validate token
-public boolean validateToken(String token) {
-    try {
-        Jwts.parser()
-            .setSigningKey(key)
-            .build()
-            .parseClaimsJws(token); // parses & verifies signature
-        return true; // Token is valid
-    } catch (Exception e) {
-        return false; // invalid or expired token
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token); // parses & verifies signature
+            return true; // Token is valid
+        } catch (Exception e) {
+            return false; // invalid or expired token
+        }
     }
-}
 
 }

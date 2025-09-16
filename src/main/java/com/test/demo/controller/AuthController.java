@@ -31,11 +31,6 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestParam String username,
                                         @RequestParam String password) {
-        System.out.println("=====================================================================");
-        System.out.println("=====================================================================");
-        System.out.println("=====================================================================");
-
-        System.out.println("user"+username+"pass"+password);
         String token = authService.login(username, password);
         return ResponseEntity.ok(token);
     }

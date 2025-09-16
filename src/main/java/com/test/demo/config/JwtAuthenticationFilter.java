@@ -2,6 +2,9 @@ package com.test.demo.config;
 
 import java.io.IOException;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -28,19 +31,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
-        
-        System.out.println("-----------------------------------------");
-        System.out.println(authHeader);
+        // System.out.println("authHeader: " + authHeader + "---------------------------------------");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
+            // System.out.println("token: " + token + "---------------------------------------");
             if (jwtUtil.validateToken(token)) {
                 String username = jwtUtil.extractUsername(token);
-                request.setAttribute("username", username); // optionally store for controllers
+                UserDetails userDetails = userService.loadUserByUsername(username);
+                // System.out.println("username: " + username + "---------------------------------------");
+                
+                UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(
+                    userDetails, null, userDetails.getAuthorities()
+                );
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                
             } else {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                // System.out.println("invalid ----------------------------------------------------");
                 return;
             }
         }
         filterChain.doFilter(request, response);
+        // System.out.println("end-------------------------------------------------");
     }
 }

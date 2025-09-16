@@ -24,19 +24,10 @@ public class UserController {
         System.out.println("dmwodmwodmwodwmdo");
         return "hellow";
     }
-    
-
-    // @PostMapping("/register")
-    // public ResponseEntity<User> register(@RequestParam String username,
-    //                                      @RequestParam String password) {
-    //     System.out.println("Registering user: " + username);
-    //     User user = userService.registerUser(username, password);
-    //     return ResponseEntity.ok(user);
-    // }
-
 
     @GetMapping("/getAll")
     public List<User> getAll() {
+        System.out.println("Getting all users");
         return userService.getAllUsers();
     }
 }
