@@ -32,6 +32,7 @@ public class AuthController {
     public ResponseEntity<String> login(@RequestParam String username,
                                         @RequestParam String password) {
         String token = authService.login(username, password);
+        System.out.println("Token: " + token);
         return ResponseEntity.ok(token);
     }
 }

@@ -3,6 +3,10 @@ package com.test.demo.util;
 import java.security.Key;
 import java.util.Date;
 
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;
@@ -12,10 +16,14 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtUtil {
 
-    // Use a 256-bit key for HS256
-    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private final Key key;
+    private final long expirationMs;
 
-    private final long expirationMs = 3600000; // 1 hour
+    public JwtUtil(@Value("${jwt.secret}") String secret,
+                   @Value("${jwt.expirationMs}") long expirationMs) {
+        this.key = new SecretKeySpec(Base64.getDecoder().decode(secret), SignatureAlgorithm.HS256.getJcaName());
+        this.expirationMs = expirationMs;
+    }
 
     // Generate JWT token
     public String generateToken(String username) {
@@ -23,7 +31,7 @@ public class JwtUtil {
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
-                .signWith(key) // correct: pass Key, not String
+                .signWith(key)
                 .compact();
     }
 
@@ -43,10 +51,10 @@ public class JwtUtil {
             Jwts.parser()
                     .setSigningKey(key)
                     .build()
-                    .parseClaimsJws(token); // parses & verifies signature
-            return true; // Token is valid
+                    .parseClaimsJws(token);
+            return true;
         } catch (Exception e) {
-            return false; // invalid or expired token
+            return false;
         }
     }
 

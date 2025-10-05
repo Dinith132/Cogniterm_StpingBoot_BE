@@ -2,11 +2,14 @@ package com.test.demo.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.test.demo.model.User;
+import com.test.demo.model.UserHistory;
+import com.test.demo.service.UserHistoryService;
 import com.test.demo.service.UserService;
 
 
@@ -15,8 +18,12 @@ import com.test.demo.service.UserService;
 public class UserController {
     private final UserService userService;
 
-    public UserController(UserService userService) {
+    private final UserHistoryService userHistoryService;
+
+
+    public UserController(UserService userService, UserHistoryService userHistoryService) {
         this.userService = userService;
+        this.userHistoryService = userHistoryService;
     }
 
     @GetMapping("/method")
@@ -30,4 +37,15 @@ public class UserController {
         System.out.println("Getting all users");
         return userService.getAllUsers();
     }
+
+    @GetMapping("/history")
+    public ResponseEntity<List<UserHistory>> getHistory() {
+        List<UserHistory> histories = userHistoryService.getUserHistories();
+        return ResponseEntity.ok(histories);
+    }
+
+
+
+
+
 }
