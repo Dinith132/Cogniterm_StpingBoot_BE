@@ -15,9 +15,9 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
     private final JwtUtil jwtUtil;
     private final UserService userService;
 
@@ -30,29 +30,42 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+
         String authHeader = request.getHeader("Authorization");
-        // System.out.println("authHeader: " + authHeader + "---------------------------------------");
+
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
-            // System.out.println("token: " + token + "---------------------------------------");
+
             if (jwtUtil.validateToken(token)) {
                 String username = jwtUtil.extractUsername(token);
-                UserDetails userDetails = userService.loadUserByUsername(username);
-                // System.out.println("username: " + username + "---------------------------------------");
-                
-                UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(
-                    userDetails, null, userDetails.getAuthorities()
-                );
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                
+
+
+
+                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    UserDetails userDetails = userService.loadUserByUsername(username);
+
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities() // must not be null
+                            );
+
+                    authToken.setDetails(new org.springframework.security.web.authentication.WebAuthenticationDetailsSource()
+                            .buildDetails(request));
+
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                    System.out.println("Authenticated------ user: " + username);
+                }
+
             } else {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                // System.out.println("invalid ----------------------------------------------------");
+                response.getWriter().write("Invalid or expired token");
                 return;
             }
         }
+
         filterChain.doFilter(request, response);
-        // System.out.println("end-------------------------------------------------");
     }
 }

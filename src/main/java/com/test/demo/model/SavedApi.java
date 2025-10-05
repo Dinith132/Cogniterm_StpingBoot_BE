@@ -3,6 +3,8 @@ package com.test.demo.model;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -30,6 +32,7 @@ public class SavedApi {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
     @Column(nullable = false)
@@ -40,6 +43,10 @@ public class SavedApi {
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
+
+    public String toString() {
+        return "UUID"+this.id+"==api"+this.apiName+"==key"+this.apiKey;
+    }
     // Getters and setters
     // ...
 }
